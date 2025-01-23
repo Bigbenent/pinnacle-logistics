@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->SMTPAuth = true;
         $mail->Username = SMTP_USER;
         $mail->Password = SMTP_PASS;
-        $mail->SMTPSecure = SMTP_SECURE;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Instead of 'ssl'
         $mail->Port = SMTP_PORT;
     
         $mail->SMTPDebug = 2; // Enable debugging
