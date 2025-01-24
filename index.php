@@ -1,5 +1,5 @@
-<?php session_start()?>
-
+<?php session_start();
+ ?>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -7,6 +7,25 @@
 <?php require_once "head.php" ?>
 
 <body>
+<style>
+  .toast-success {
+    background-color: #28a745 !important; /* Green */
+    color: #fff !important;
+  }
+  .toast-error {
+    background-color: #dc3545 !important; /* Red */
+    color: #fff !important;
+  }
+  .toast-info {
+    background-color: #17a2b8 !important; /* Blue */
+    color: #fff !important;
+  }
+  .toast-warning {
+    background-color: #ffc107 !important; /* Yellow */
+    color: #fff !important;
+  }
+</style>
+
     <!-- Topbar Start -->
     <?php require_once "navbar.php" ?>
 
@@ -17,22 +36,11 @@
         <div class="container text-center py-5">
             <h1 class="text-light mb-4">Safe & Faster</h1>
             <h1 class="text-white display-3 mb-5">Logistics Services</h1>
-            <form enctype="multipart/form-data" method="post"  action="action/main_work.php?option=track" class="trackForm">
-                <?php if(isset($_SESSION['formError'])){?>
-                            <?php foreach($_SESSION['formError'] as $k => $eachErrorArray){?>
-                                <?php foreach($eachErrorArray as $k => $eachError){?>
-                                    <p class="alert alert-danger"><?php echo $eachError ?></p>
-                                <?php } ?>
-                            <?php } ?>
-                            <?php unset($_SESSION['formError']); ?>
-                        <?php } ?>
-                        <?php if(isset($_GET['success'])){?>
-                            <p class="alert alert-success"><?php echo trim($_GET['success']); ?></p>
-                        <?php } ?>
-
+            <form method="post" action="track_order.php">
+              
                   <div class="form-group d-flex">
                   <input type="hidden" name="_token" value="ZhnQiyjpGjnLNc7YR8wb5nZ8n6rw9AUaY68Xd9at">
-                  <input type="text" name="tracking_no" class="form-control" placeholder="Your tracking number">
+                  <input type="text" name="tracking_number" class="form-control" placeholder="Your tracking number">
                     <input type="submit" class="btn btn-danger text-white px-4" value="Track Now">
                   </div>
                 </form>
@@ -114,25 +122,26 @@
                 </div>
                 <div class="col-lg-5">
                     <div class="bg-primary py-5 px-4 px-sm-5">
-                        <form class="py-5">
-                            <div class="form-group">
-                                <input type="text" class="form-control border-0 p-4" placeholder="Your Name" required="required" />
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control border-0 p-4" placeholder="Your Email" required="required" />
-                            </div>
-                            <div class="form-group">
-                                <select class="custom-select border-0 px-4" style="height: 47px;">
-                                    <option selected>Select A Service</option>
-                                    <option value="1">Service 1</option>
-                                    <option value="2">Service 1</option>
-                                    <option value="3">Service 1</option>
-                                </select>
-                            </div>
-                            <div>
-                                <button class="btn btn-dark btn-block border-0 py-3" type="submit">Get A Quote</button>
-                            </div>
-                        </form>
+                    <form id="quoteForm" class="py-5">
+    <div class="form-group">
+        <input type="text" class="form-control border-0 p-4" id="name" placeholder="Your Name" required="required" />
+    </div>
+    <div class="form-group">
+        <input type="email" class="form-control border-0 p-4" id="email" placeholder="Your Email" required="required" />
+    </div>
+    <div class="form-group">
+        <select class="custom-select border-0 px-4" id="service" style="height: 47px;">
+            <option selected>Select A Service</option>
+            <option value="1">Service 1</option>
+            <option value="2">Service 2</option>
+            <option value="3">Service 3</option>
+        </select>
+    </div>
+    <div>
+        <button class="btn btn-dark btn-block border-0 py-3" type="submit">Get A Quote</button>
+    </div>
+</form>
+
                     </div>
                 </div>
             </div>
@@ -507,10 +516,78 @@ In today's interconnected world, navigating the complexities of global trade req
     <?php require_once "footer.php" ?>
 
     <!-- Footer End -->
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("quoteForm"); // Select the correct form
+
+    form.addEventListener("submit", function (event) {
+        let isValid = true;
+        const name = document.getElementById("name");
+        const email = document.getElementById("email");
+        const service = document.getElementById("service");
+
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right"
+        };
+
+        // Name validation
+        if (name.value.trim() === "") {
+            toastr.error("Please enter your name.");
+            isValid = false;
+        }
+
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.value.trim())) {
+            toastr.error("Please enter a valid email address.");
+            isValid = false;
+        }
+
+        // Service selection validation
+        if (service.value === "Select A Service") {
+            toastr.error("Please select a valid service.");
+            isValid = false;
+        }
+
+        // If validation fails, prevent form submission
+        if (!isValid) {
+            event.preventDefault();
+        } else {
+            toastr.success("Form submitted successfully!");
+            
+            // Allow submission after 1 second
+            setTimeout(() => {
+                form.submit();
+            }, 1000);
+
+            event.preventDefault(); // Prevent immediate submission
+        }
+    });
+});
+</script>
 
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+ <!-- jQuery & Toastr JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    <?php if (isset($_SESSION['error'])) { ?>
+        toastr.error("<?php echo $_SESSION['error']; ?>");
+        <?php unset($_SESSION['error']); ?>
+    <?php } ?>
+
+    <?php if (isset($_SESSION['success'])) { ?>
+        toastr.success("<?php echo $_SESSION['success']; ?>");
+        <?php unset($_SESSION['success']); ?>
+    <?php } ?>
+});
+</script>
 
 
     <!-- JavaScript Libraries -->

@@ -35,9 +35,12 @@ include('../controller/db_connect.php'); // Include database connection
                                 <th>Sender Phone</th>
                                 <th>Recipient Name</th>
                                 <th>Recipient Phone</th>
+                                <th>Recipient Email</th>
                                 <th>Recipient Address</th>
                                 <th>Shipment Type</th>
                                 <th>Weight</th>
+                                <th>Track Point</th>
+                                <th>Package Desc</th>
                                 <th>Departure Date</th>
                                 <th>Arrival Date</th>
                                 <th>Status</th>
@@ -63,9 +66,12 @@ include('../controller/db_connect.php'); // Include database connection
                                     <td>{$order['sender_phone']}</td>
                                     <td>{$order['recipient_name']}</td>
                                     <td>{$order['recipient_phone']}</td>
+                                    <td>{$order['recipient_email']}</td>
                                     <td>{$order['recipient_address']}</td>
                                     <td>{$order['shipment_type']}</td>
                                     <td>{$order['weight']}</td>
+                                    <td>{$order['track_point']}</td>
+                                    <td>{$order['desc']}</td>
                                     <td>{$order['departure_date']}</td>
                                     <td>{$order['arrival_date']}</td>
                                     <td>{$order['status']}</td>

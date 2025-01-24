@@ -1,5 +1,7 @@
 <?php 
 session_start();
+require_once '../controller/adminsession.php';
+
 require_once 'head.php' ?>
 
 <body>
@@ -59,6 +61,10 @@ require_once 'head.php' ?>
                                 <input type="tel" class="form-control" id="recipientPhone" name="recipient_phone" placeholder="Enter recipient's phone number" required>
                             </div>
                             <div class="mb-3">
+                                <label for="recipient_email" class="form-label">Recipient's Email</label>
+                                <input type="email" class="form-control" id="recipient_email" name="recipient_email" placeholder="Enter recipient's Email" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="recipientAddress" class="form-label">Recipient's Address</label>
                                 <textarea class="form-control" id="recipientAddress" name="recipient_address" rows="3" placeholder="Enter recipient's address" required></textarea>
                             </div>
@@ -73,6 +79,18 @@ require_once 'head.php' ?>
                                     <option value="Truck">Truck</option>
                                     <option value="freight">Freight</option>
                                 </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <input type="text" class="form-control" id="location" name="current_location" placeholder="Enter The current location" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="desc" class="form-label">Package Desc</label>
+                                <textarea class="form-control" id="desc" name="desc" rows="3" placeholder="Enter Package description" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="track_point" class="form-label">Package Track Point</label>
+                                <input type="number" class="form-control" id="track_point" name="track_point" placeholder="Enter Package track point" required>
                             </div>
                             <div class="mb-3">
                                 <label for="weight" class="form-label">Weight (kg)</label>

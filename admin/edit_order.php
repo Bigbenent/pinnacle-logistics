@@ -64,6 +64,10 @@ if (isset($_GET['id'])) {
                         <label for="recipient_phone">Recipient Phone</label>
                         <input type="text" class="form-control" id="recipient_phone" name="recipient_phone" value="<?php echo $order['recipient_phone']; ?>" >
                     </div>
+                    <div class="form-group">
+                        <label for="recipient_email">Recipient email</label>
+                        <input type="text" class="form-control" id="recipient_email" name="recipient_email" value="<?php echo $order['recipient_email']; ?>" >
+                    </div>
 
                     <div class="form-group">
                         <label for="recipient_address">Recipient Address</label>
@@ -82,7 +86,22 @@ if (isset($_GET['id'])) {
 
                     <div class="form-group">
                         <label for="weight">Weight</label>
-                        <input type="text" class="form-control" id="weight" name="weight" value="<?php echo $order['weight']; ?>" >
+                        <input type="tnumberext" class="form-control" id="weight" name="weight" value="<?php echo $order['weight']; ?>" >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="track_point">Track Point</label>
+                        <input type="number" class="form-control" id="track_point" name="track_point" value="<?php echo $order['track_point']; ?>" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="desc">package Description</label>
+                        <input type="text" class="form-control" id="desc" name="desc" value="<?php echo $order['desc']; ?>" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="current_location">Current location</label>
+                        <input type="text" class="form-control" id="current_location" name="current_location" value="<?php echo $order['current_location']; ?>" >
                     </div>
 
                     <div class="form-group">

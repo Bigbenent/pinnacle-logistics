@@ -39,7 +39,7 @@
                     <h6 class="text-primary text-uppercase font-weight-bold">About Us</h6>
                     <h1 class="mb-4">Trusted & Faster Logistic Service Provider</h1>
                     <p class="mb-4">
-                    At Wayfare Logistics, we specialize in providing comprehensive, reliable, and efficient logistics solutions tailored to meet the unique needs of our clients. Our mission is to streamline the supply chain process, ensuring your goods are transported safely, swiftly, and economically from point A to point B
+                    At Pinnacle Logistics, we specialize in providing comprehensive, reliable, and efficient logistics solutions tailored to meet the unique needs of our clients. Our mission is to streamline the supply chain process, ensuring your goods are transported safely, swiftly, and economically from point A to point B
                     </p>
                     <div class="d-flex align-items-center pt-2">
                         <button type="button" class="btn-play" data-toggle="modal"
@@ -81,7 +81,7 @@
                 <div class="col-lg-7 py-5 py-lg-0">
                     <h6 class="text-primary text-uppercase font-weight-bold">Why Choose Us</h6>
                     <h1 class="mb-4">Faster, Safe and Trusted Logistics Services</h1>
-                    <p class="mb-4">When it comes to logistics, choosing the right partner can make all the difference. At Wayfare Logistics, we pride ourselves on delivering unparalleled service and tailored solutions that drive your business forward. Here’s why you should choose us:</p>
+                    <p class="mb-4">When it comes to logistics, choosing the right partner can make all the difference. At Pinnacle Logistics, we pride ourselves on delivering unparalleled service and tailored solutions that drive your business forward. Here’s why you should choose us:</p>
                     <ul class="list-inline">
                         <li><h6><i class="far fa-dot-circle text-primary mr-3"></i>Best In Industry</h6>
                         <li><h6><i class="far fa-dot-circle text-primary mr-3"></i>Emergency Services</h6></li>

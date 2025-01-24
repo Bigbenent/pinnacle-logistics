@@ -1,46 +1,27 @@
 <?php
 session_start();
-include('db_connect.php'); // Include your database connection
+require 'db_connect.php'; // Database connection
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+    $password = $_POST['password'];
 
-    // Check if the fields are empty
-    if (empty($email) || empty($password)) {
-        $_SESSION['toastr_message'] = 'Email and Password are required!';
-        $_SESSION['toastr_type'] = 'error';
-        header("Location: ../Admin/login.php"); // Redirect to login page with error message
+    $stmt = $pdo->prepare("SELECT * FROM admins WHERE email = ?");
+    $stmt->execute([$email]);
+    $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($admin && password_verify($password, $admin['password'])) {
+        $_SESSION['admin_id'] = $admin['id'];
+        $_SESSION['admin_name'] = $admin['name'];
+        
+        $_SESSION['toastr_message'] = "Login successful!";
+        $_SESSION['toastr_type'] = "success";
+        header("Location: ../admin/index.php");
         exit();
-    }
-
-    // Fetch the user from the database
-    $sql = "SELECT * FROM admin WHERE email = :email";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(['email' => $email]);
-    $user = $stmt->fetch();
-
-    if ($user) {
-        // Verify the password
-        if (password_verify($password, $user['password'])) {
-            // Password is correct, log the user in
-            $_SESSION['admin_id'] = $user['id']; // Store user ID in session
-            $_SESSION['toastr_message'] = 'Login successful!';
-            $_SESSION['toastr_type'] = 'success';
-            header("Location: ../Admin/index.php"); // Redirect to user dashboard
-            exit();
-        } else {
-            // Password is incorrect
-            $_SESSION['toastr_message'] = 'Incorrect password!';
-            $_SESSION['toastr_type'] = 'error';
-            header("Location: ../Admin/login.php"); // Redirect to login page with error message
-            exit();
-        }
     } else {
-        // Email not found
-        $_SESSION['toastr_message'] = 'Email not found!';
-        $_SESSION['toastr_type'] = 'error';
-        header("Location: ../Admin/login.php"); // Redirect to login page with error message
+        $_SESSION['toastr_message'] = "Invalid email or password!";
+        $_SESSION['toastr_type'] = "error";
+        header("Location: ../admin/login.php");
         exit();
     }
 }

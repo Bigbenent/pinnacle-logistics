@@ -1,14 +1,12 @@
-<?php require_once ('action/main_work.php')?>
 <?php
-if (isset($_GET['success']))
-    $userId = $_GET['success'];
-$getdetall = $for->getdetall($userId);
-$userDetails = $for->getLoggedInUserDetails($userId);
-$getTrackId = $for->getTrackId($userId);
-// $getTrackIdUpdate = $for->getTrackIdUpdate($userId);
+session_start();
+if (!isset($_SESSION['tracking_details'])) {
+    header("Location: index.php");
+    exit();
+}
 
-
-//print_r($userId); die();
+$delivery = $_SESSION['tracking_details']; // Retrieve tracking details
+unset($_SESSION['tracking_details']); // Clear session data
 ?>
 
 <!DOCTYPE html>
@@ -18,7 +16,7 @@ $getTrackId = $for->getTrackId($userId);
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>WAYFARE-LOGISTICS</title>
+  <title>Pinnacle-LOGISTICS</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -28,7 +26,8 @@ $getTrackId = $for->getTrackId($userId);
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-
+<!-- Include Toastr CSS in the <head> section -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <!-- Vendor CSS Files -->
   <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -41,6 +40,22 @@ $getTrackId = $for->getTrackId($userId);
  
 </head>
 <style>
+      .toast-success {
+    background-color: #28a745 !important; /* Green */
+    color: #fff !important;
+  }
+  .toast-error {
+    background-color: #dc3545 !important; /* Red */
+    color: #fff !important;
+  }
+  .toast-info {
+    background-color: #17a2b8 !important; /* Blue */
+    color: #fff !important;
+  }
+  .toast-warning {
+    background-color: #ffc107 !important; /* Yellow */
+    color: #fff !important;
+  }
   .deliver {
   font-family: Arial, sans-serif;
   text-align: center;
@@ -162,50 +177,25 @@ top: 30px;
    <div class="container px-1 px-md-4 py-5 mx-auto">
         <div class="card">
             <p class="read"><b>Current Location</b></p>
-            <img src="location.webp" class="location" alt="">
-            <p class="country"><b>
-            <?php echo ucwords($userDetails->current_location) ?>
+            <img src="location.png" class="location" alt="">
+            <p class="country"><?php echo htmlspecialchars($delivery['current_location']); ?>
+            <b>
+       
 
             </b></p>
-        <img src="scan.png" alt="" class="scan">
+        <img src="scan.jpg" alt="" class="scan">
 
             <div class="row d-flex justify-content-between px-3 top">
                 <div class="d-flex">
                     <h5><b>Tracking Id </b><span class="text-success font-weight-bold">
-                    <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[9];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
-                    </span>
+                    <?php echo htmlspecialchars($delivery['tracking_number']); ?>
                   </h5>
                 </div>
                 <div class="d-flex flex-column text-sm-right">
                     <b class="mb-0"><b>Shipment-statues</b>
                       <span class="text-success font-weight-bold">
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
+                      <?php echo htmlspecialchars($delivery['status']); ?>
 
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[14];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
                       </span></b>
 
                 </div>
@@ -213,20 +203,8 @@ top: 30px;
                     <b class="mb-0"> <b>Delivery destination</b>
                       <span class="text-success font-weight-bold">
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
+                      <?php echo htmlspecialchars($delivery['recipient_address']); ?>
 
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[8];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
                       </td>
                       </span></b>
 
@@ -248,119 +226,16 @@ top: 30px;
               <table>
                   <tr>
                     <th>Sender's name</th>
-                      <th>sender's country</th>
-                      <th>sender's email</th>
+                      <th>sender's Phone</th>
                   </tr>
                   <tr>
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[1];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                        <?php echo htmlspecialchars($delivery['sender_name']); ?>
                       </td>
 
-                      <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[5];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
-                      </td>
 
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[4];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
-                      </td>
-                  </tr>
-              </table>
-          
-              <table>
-                  <tr>
-                  <th>track_point</th>
-                      <th>sender's phone number</th>
-                      <th>package Description</th>
-                  </tr>
-                  <tr>
-                      <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[15];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
-                      </td>
-
-                      <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[3];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
-                      </td>
-
-                      <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[12];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                                            <?php echo htmlspecialchars($delivery['sender_phone']); ?>
                       </td>
                   </tr>
               </table>
@@ -372,82 +247,50 @@ top: 30px;
                   </tr>
                   <tr>
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[6];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                                            <?php echo htmlspecialchars($delivery['recipient_name']); ?>
                       </td>
 
                     
 
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[7];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                                         <?php echo htmlspecialchars($delivery['recipient_address']); ?>
                       </td>
                   </tr>
               </table>
+          
+              <table>
+                  <tr>
+                  <th>track_point</th>
+                      <th>Reciever_phone number</th>
+                  </tr>
+                  <tr>
+                      <td>
+                                            <?php echo htmlspecialchars($delivery['track_point']); ?>
+                      </td>
+
+                      <td>
+                                            <?php echo htmlspecialchars($delivery['recipient_phone']); ?>
+                      </td>
+
+                     
+                  </tr>
+              </table>
+
+             
 
               <table>
                   <tr>
-                    <th>Reciever_phone number</th>
+                    <th>package Description </th>
                       <th>Departure_date</th>
                       
                   </tr>
                   <tr>
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[11];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                                            <?php echo htmlspecialchars($delivery['desc']); ?>
                       </td>
 
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[10];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                                            <?php echo htmlspecialchars($delivery['departure_date']); ?>
                       </td>
 
                   </tr>
@@ -463,36 +306,10 @@ top: 30px;
                   <tr>
 
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[2];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                                            <?php echo htmlspecialchars($delivery['weight']); ?>
                       </td>
                       <td>
-                      <?php  $details = $for->runMysqliQuery( "SELECT * FROM main_table WHERE tracking_no = '$userId'");
-                                            if($details['error_code'] == 1){
-                                                return $details['error'];
-                                            }
-                                            $result = $details['data'];
-                                            if(mysqli_num_rows($result) == 0) {
-                                                return 0;
-                                            }else {
-
-                                                while ($row = mysqli_fetch_array($result)) {
-                                                    $output = $row[13];
-                                                }
-                                            }
-                                            ?><?php echo $output;?>
+                                            <?php echo htmlspecialchars($delivery['arrival_date']); ?>
                       </td>
                   </tr>
               </table>
@@ -506,7 +323,23 @@ top: 30px;
 <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
 <div id="preloader"></div>
+<!-- jQuery and Toastr JS, place these just before </body> -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Make sure jQuery is loaded before Toastr -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<script>
+$(document).ready(function() {
+    <?php if (isset($_SESSION['error'])) { ?>
+        toastr.error("<?php echo $_SESSION['error']; ?>");
+        <?php unset($_SESSION['error']); ?>
+    <?php } ?>
+
+    <?php if (isset($_SESSION['success'])) { ?>
+        toastr.success("<?php echo $_SESSION['success']; ?>");
+        <?php unset($_SESSION['success']); ?>
+    <?php } ?>
+});
+</script>
 <!-- Vendor JS Files -->
 <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>

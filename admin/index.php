@@ -1,3 +1,6 @@
+<?php require_once '../controller/adminsession.php' ?>
+
+
 <?php require_once 'head.php' ?>
 
 
